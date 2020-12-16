@@ -2,6 +2,7 @@ package be.vdab.fietsacademy.domain;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 
 @Entity
@@ -51,5 +52,13 @@ public class Docent {
 
         public Geslacht getGeslacht() {
                 return geslacht;
+        }
+
+        public void opslag(BigDecimal percentage) {
+                if (percentage.compareTo(BigDecimal.ZERO) <= 0) {
+                        throw new IllegalArgumentException();
+                }
+                var factor = BigDecimal.ONE.add(percentage.divide(BigDecimal.valueOf(100)));
+                wedde = wedde.multiply(factor).setScale(2, RoundingMode.HALF_UP);
         }
 }
