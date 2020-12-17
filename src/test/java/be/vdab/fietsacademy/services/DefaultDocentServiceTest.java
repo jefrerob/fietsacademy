@@ -45,4 +45,6 @@ class DefaultDocentServiceTest {
                 .isThrownBy(()->service.opslag(-1, BigDecimal.TEN));
         verify(repository).findById(-1);
     }
+
+
 }
