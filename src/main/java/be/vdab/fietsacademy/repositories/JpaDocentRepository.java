@@ -2,6 +2,8 @@ package be.vdab.fietsacademy.repositories;
 
 
 import be.vdab.fietsacademy.domain.Docent;
+import be.vdab.fietsacademy.queryresults.AantalDocentenPerWedde;
+import be.vdab.fietsacademy.queryresults.IdEnEmailAdres;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -51,6 +53,25 @@ private  final EntityManager manager;
                 "select d.emailAdres from Docent d", String.class).getResultList();
     }
 
+    @Override
+    public List<IdEnEmailAdres> findIdsEnEmailAdressen() {
+        return manager.createQuery(
+                "select new be.vdab.fietsacademy.queryresults.IdEnEmailAdres(d.id, d.emailAdres)" +
+                        "from Docent d", IdEnEmailAdres.class).getResultList();
+    }
 
+    @Override
+    public BigDecimal findGrootsteWedde() {
+        return manager.createQuery(
+                "select max(d.wedde) from Docent d", BigDecimal.class).getSingleResult();
+    }
+
+    @Override
+    public List<AantalDocentenPerWedde> findAantalDocentenPerWedde() {
+        return manager.createQuery(
+                "select new be.vdab.fietsacademy.queryresults.AantalDocentenPerWedde(" +
+                        "d.wedde,count(d)) from Docent d group by d.wedde",
+                AantalDocentenPerWedde.class).getResultList();
+    }
 
 }
