@@ -42,8 +42,7 @@ private  final EntityManager manager;
 
     @Override
     public List<Docent> findByWeddeBetween(BigDecimal van, BigDecimal tot) {
-        return manager.createQuery(
-                "select d from Docent d where d.wedde between :van and :tot", Docent.class)
+        return manager.createNamedQuery("Docent.findByWeddeBetween", Docent.class)
                 .setParameter("van", van).setParameter("tot", tot).getResultList();
     }
 
@@ -73,5 +72,16 @@ private  final EntityManager manager;
                         "d.wedde,count(d)) from Docent d group by d.wedde",
                 AantalDocentenPerWedde.class).getResultList();
     }
+
+    @Override
+    public int algemeneOpslag(BigDecimal percentage) {
+        var factor = BigDecimal.ONE.add(percentage.divide(BigDecimal.valueOf(100)));
+        return manager.createNamedQuery("Docent.algemeneOpslag")
+                .setParameter("factor", factor)
+                .executeUpdate();
+    }
+
+
+
 
 }

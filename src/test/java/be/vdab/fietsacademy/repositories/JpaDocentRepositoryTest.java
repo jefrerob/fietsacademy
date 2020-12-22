@@ -130,5 +130,16 @@ class JpaDocentRepositoryTest extends AbstractTransactionalJUnit4SpringContextTe
                         .isEqualTo(super.countRowsInTableWhere(DOCENTEN, "wedde = 1000")));
     }
 
+    @Test
+    void algemeneOpslag() {
+        assertThat(repository.algemeneOpslag(BigDecimal.TEN))
+                .isEqualTo(super.countRowsInTable(DOCENTEN));
+        assertThat(super.jdbcTemplate.queryForObject(
+                "select wedde from docenten where id=?", BigDecimal.class, idVanTestMan()))
+                .isEqualByComparingTo("1100");
+    }
+
+    
+
 }
 
