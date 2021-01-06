@@ -3,17 +3,22 @@ package be.vdab.fietsacademy.domain;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.Table;
 
 @Entity
-@DiscriminatorValue("I")
+@Table(name = "individuelecursussen")
 public class IndividueleCursus extends Cursus {
     private int duurtijd;
 
     protected IndividueleCursus() {
     }
 
-    public IndividueleCursus(long id, String naam, int duurtijd) {
-        super(id, naam);
+    public IndividueleCursus( String naam, int duurtijd) {
+        super(naam);
         this.duurtijd = duurtijd;
+    }
+
+    public int getDuurtijd() {
+        return duurtijd;
     }
 }
