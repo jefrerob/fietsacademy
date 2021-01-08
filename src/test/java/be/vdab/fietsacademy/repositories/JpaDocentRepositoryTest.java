@@ -139,6 +139,22 @@ class JpaDocentRepositoryTest extends AbstractTransactionalJUnit4SpringContextTe
                 .isEqualByComparingTo("1100");
     }
 
+    @Test
+    void bijnamenLezen() {
+        assertThat(repository.findById(idVanTestMan()).get().getBijnamen())
+                .containsOnly("test");
+    }
+    @Test
+    void bijnaamToevoegen() {
+        repository.create(docent);
+        docent.addBijnaam("test");
+        manager.flush();
+        assertThat(super.jdbcTemplate.queryForObject(
+                "select bijnaam from docentenbijnamen where docentid=?", String.class,
+                docent.getId()))
+                .isEqualTo("test");
+    }
+
     
 
 }
