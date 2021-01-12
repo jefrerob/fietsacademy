@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Collections;
 import java.util.LinkedHashSet;
+import java.util.Locale;
 import java.util.Set;
 
 
@@ -25,17 +26,20 @@ public class Docent {
                 joinColumns = @JoinColumn(name = "docentid") )
         @Column(name = "bijnaam")
         private Set<String> bijnamen;
-
+/*        @JoinColumn(name = "campusid")
+        private Campus campus;
+*/
         protected Docent(){
         }
 
-        public Docent(String voornaam, String familienaam, BigDecimal wedde, String emailAdres, Geslacht geslacht) {
+        public Docent(String voornaam, String familienaam, BigDecimal wedde, String emailAdres, Geslacht geslacht/*, Campus campus*/) {
                 this.voornaam = voornaam;
                 this.familienaam = familienaam;
                 this.wedde = wedde;
                 this.emailAdres = emailAdres;
                 this.geslacht = geslacht;
                 this.bijnamen = new LinkedHashSet<>();
+//                setCampus(campus);
 
         }
 
@@ -66,7 +70,15 @@ public class Docent {
         public Set<String> getBijnamen() {
                 return Collections.unmodifiableSet(bijnamen);
         }
+/*
+        public Campus getCampus() {
+                return campus;
+        }
 
+        public void setCampus(Campus campus) {
+                this.campus = campus;
+        }
+*/
         public boolean addBijnaam(String bijnaam) {
                 if (bijnaam.trim().isEmpty()) {
                         throw new IllegalArgumentException();
@@ -85,6 +97,17 @@ public class Docent {
                 wedde = wedde.multiply(factor).setScale(2, RoundingMode.HALF_UP);
         }
 
+        @Override
+        public boolean equals(Object object) {
+                if (object instanceof Docent) {
+                        return emailAdres.equalsIgnoreCase(((Docent) object).emailAdres);
+                }
+                return false;
+        }
+        @Override
+        public int hashCode() {
+                return emailAdres == null ? 0 : emailAdres.toLowerCase().hashCode();
+        }
 
 
 }
