@@ -10,14 +10,16 @@ import static org.assertj.core.api.Assertions.*;
 class DocentTest {
     private final static BigDecimal WEDDE = BigDecimal.valueOf(200);
     private Campus campus1;
+    private Campus campus2;
     private Docent docent1;
     private Docent docent2;
 
     @BeforeEach
     void beforeEach() {
         campus1 = new Campus("test", new Adres("test", "test", "test", "test"));
-        docent1 = new Docent("test", "test", WEDDE, "test@test.be", Geslacht.MAN/*, campus1*/);
-        docent2 = new Docent("test2", "test2", WEDDE, "test2@test.be", Geslacht.MAN);
+        campus2 = new Campus("test2", new Adres("test2", "test2", "test2", "test2"));
+        docent1 = new Docent("test", "test", WEDDE, "test@test.be", Geslacht.MAN, campus1);
+        docent2 = new Docent("test2", "test2", WEDDE, "test2@test.be", Geslacht.MAN, campus1);
     }
 
     @Test
@@ -92,8 +94,20 @@ class DocentTest {
 
     @Test
     void meerdereDocentenKunnenTotDezelfdeCampusBehoren() {
-        assertThat(campus1.add(docent1)).isTrue();
-        assertThat(campus1.add(docent2)).isTrue();
+        assertThat(campus1.getDocenten()).containsOnly(docent1,docent2);
+    }
+
+    @Test
+    void docent1VerhuistVanCampus1NaarCampus2() {
+        docent1.setCampus(campus2);
+        assertThat(docent1.getCampus()).isEqualTo(campus2);
+        assertThat(campus1.getDocenten()).doesNotContain(docent1);
+        assertThat(campus2.getDocenten()).containsOnly(docent1);
+    }
+
+    @Test
+    void eenNullCampusInDeSetterMislukt() {
+        assertThatNullPointerException().isThrownBy(()->docent1.setCampus(null));
     }
 
 }

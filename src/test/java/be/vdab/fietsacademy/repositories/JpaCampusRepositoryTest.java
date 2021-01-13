@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 @Import(JpaCampusRepository.class)
-@Sql("/insertCampus.sql")
+@Sql({"/insertCampus.sql", "/insertDocent.sql"})
 class JpaCampusRepositoryTest
         extends AbstractTransactionalJUnit4SpringContextTests {
     private static final String CAMPUSSEN = "campussen";
@@ -51,5 +51,14 @@ class JpaCampusRepositoryTest
         assertThat(repository.findById(idVanTestCampus()).get().getTelefoonNrs())
                 .containsOnly(new TelefoonNr("1", false, "test"));
     }
+
+    @Test
+    void docentenLazyLoaded() {
+        assertThat(repository.findById(idVanTestCampus()).get().getDocenten())
+                .hasSize(2)
+                .first().extracting(docent->docent.getVoornaam()).isEqualTo("testM");
+    }
+
+
 
 }
