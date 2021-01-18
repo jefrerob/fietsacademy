@@ -1,9 +1,6 @@
 package be.vdab.fietsacademy.repositories;
 
-import be.vdab.fietsacademy.domain.Adres;
-import be.vdab.fietsacademy.domain.Campus;
-import be.vdab.fietsacademy.domain.Docent;
-import be.vdab.fietsacademy.domain.Geslacht;
+import be.vdab.fietsacademy.domain.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -18,7 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 
 @DataJpaTest
-@Sql({"/insertCampus.sql", "/insertDocent.sql"})
+@Sql({"/insertCampus.sql", "/insertVerantwoordelijkheid.sql", "/insertDocent.sql", "/insertDocentVerantwoordelijkheid.sql"})
 @Import(JpaDocentRepository.class)
 class JpaDocentRepositoryTest extends AbstractTransactionalJUnit4SpringContextTests {
 
@@ -27,7 +24,6 @@ class JpaDocentRepositoryTest extends AbstractTransactionalJUnit4SpringContextTe
     private final EntityManager manager;
     private static final String DOCENTEN = "docenten";
     private Campus campus;
-    private Docent docent2;
 
 
     public JpaDocentRepositoryTest(JpaDocentRepository repository, EntityManager manager) {
@@ -39,6 +35,7 @@ class JpaDocentRepositoryTest extends AbstractTransactionalJUnit4SpringContextTe
     void beforeEach() {
         campus = new Campus("test", new Adres("test", "test", "test", "test"));
         docent = new Docent("test", "test", BigDecimal.TEN, "test@test.be", Geslacht.MAN, campus);
+
     }
 
     private long idVanTestMan() {
@@ -174,6 +171,25 @@ class JpaDocentRepositoryTest extends AbstractTransactionalJUnit4SpringContextTe
     void campusLazyLoaded() {
         var docent = repository.findById(idVanTestMan()).get();
         assertThat(docent.getCampus().getNaam()).isEqualTo("test");
+    }
+
+    @Test
+    void verantwoordelijkhedenLezen() {
+        assertThat(repository.findById(idVanTestMan()).get().getVerantwoordelijkheden())
+                .containsOnly(new Verantwoordelijkheid("test"));
+    }
+    @Test
+    void verantwoordelijkheidToevoegen() {
+        var verantwoordelijkheid = new Verantwoordelijkheid("test2");
+        manager.persist(verantwoordelijkheid);
+        manager.persist(campus);
+        repository.create(docent);
+        docent.add(verantwoordelijkheid);
+        manager.flush();
+        assertThat(super.jdbcTemplate.queryForObject(
+                "select verantwoordelijkheidid from docentenverantwoordelijkheden " +
+                        "where docentid=?", Long.class, docent.getId()).longValue())
+                .isEqualTo(verantwoordelijkheid.getId());
     }
 
 }
