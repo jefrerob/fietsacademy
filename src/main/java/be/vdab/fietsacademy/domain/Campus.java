@@ -1,5 +1,6 @@
 package be.vdab.fietsacademy.domain;
 
+
 import javax.persistence.*;
 import java.util.Collections;
 import java.util.LinkedHashSet;
