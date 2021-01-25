@@ -3,7 +3,6 @@ package be.vdab.fietsacademy.domain;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Locale;
@@ -12,9 +11,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "docenten")
-@NamedEntityGraph(name = Docent.MET_CAMPUS,    attributeNodes = @NamedAttributeNode("campus"))
 public class Docent {
-        public static final String MET_CAMPUS = "Docent.metCampus";
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         private long id;
@@ -35,8 +32,6 @@ public class Docent {
         @ManyToMany(mappedBy = "docenten")
         private Set<Verantwoordelijkheid> verantwoordelijkheden
                 = new LinkedHashSet<>();
-        @Version
-        private Timestamp versie;
 
         protected Docent(){
         }
